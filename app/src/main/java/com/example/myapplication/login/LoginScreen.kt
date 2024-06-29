@@ -1,7 +1,5 @@
-package com.example.myapplication
+package com.example.myapplication.login
 
-import android.graphics.BitmapFactory
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -11,23 +9,46 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
-fun LoginScreen(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LoginScreen(viewModel: LoginViewModel) {
+    val viewState = viewModel.viewState.collectAsState()
+    val username = viewState.value.username ?: ""
+    val password = viewState.value.password ?: ""
+    val isInvalidUser = viewState.value.isInvalidUser
+    LoginScreen(
+        username = username,
+        password = password,
+        isInvalidUser = isInvalidUser,
+        onUsernameChanged = viewModel::onUsernameChanged,
+        onPasswordChanged = viewModel::onPasswordChanged,
+        onLoginClicked = viewModel::onLoginClicked
+    )
+}
 
-    Box(modifier = Modifier.fillMaxSize()) {
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun LoginScreen(
+    username: String,
+    password: String,
+    isInvalidUser: Boolean,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onLoginClicked: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxSize()
+    ) {
         GlideImage(
-            model = R.drawable.background_image,
+            model = android.R.drawable.screen_background_dark,
             contentDescription = "Background",
             modifier = Modifier.fillMaxSize()
         )
@@ -46,11 +67,12 @@ fun LoginScreen(navController: NavController) {
             )
             BasicTextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = onUsernameChanged,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
                     .background(Color.White)
+                    .height(72.dp)
                     .padding(16.dp),
                 keyboardOptions = KeyboardOptions.Default,
                 decorationBox = { innerTextField ->
@@ -62,11 +84,12 @@ fun LoginScreen(navController: NavController) {
             )
             BasicTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = onPasswordChanged,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
                     .background(Color.White)
+                    .height(72.dp)
                     .padding(16.dp),
                 keyboardOptions = KeyboardOptions.Default,
                 visualTransformation = PasswordVisualTransformation(),
@@ -78,11 +101,29 @@ fun LoginScreen(navController: NavController) {
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                navController.navigate("Store")
-            }) {
+            Button(onClick = onLoginClicked) {
                 Text(text = "Login")
+            }
+            if (isInvalidUser) {
+                Text(
+                    text = "Invalid username or password",
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun Preview() {
+    LoginScreen(
+        username = "Nanda",
+        password = "12345",
+        isInvalidUser = false,
+        onUsernameChanged = {},
+        onPasswordChanged = {},
+        onLoginClicked = {}
+    )
 }
