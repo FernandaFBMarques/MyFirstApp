@@ -21,9 +21,11 @@ fun LoginScreen(viewModel: LoginViewModel) {
     val viewState = viewModel.viewState.collectAsState()
     val username = viewState.value.username ?: ""
     val password = viewState.value.password ?: ""
+    val isInvalidUser = viewState.value.isInvalidUser
     LoginScreen(
         username = username,
         password = password,
+        isInvalidUser = isInvalidUser,
         onUsernameChanged = viewModel::onUsernameChanged,
         onPasswordChanged = viewModel::onPasswordChanged,
         onLoginClicked = viewModel::onLoginClicked
@@ -35,6 +37,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
 fun LoginScreen(
     username: String,
     password: String,
+    isInvalidUser: Boolean,
     onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onLoginClicked: () -> Unit
@@ -101,6 +104,13 @@ fun LoginScreen(
             Button(onClick = onLoginClicked) {
                 Text(text = "Login")
             }
+            if (isInvalidUser) {
+                Text(
+                    text = "Invalid username or password",
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
         }
     }
 }
@@ -111,6 +121,7 @@ fun Preview() {
     LoginScreen(
         username = "Nanda",
         password = "12345",
+        isInvalidUser = false,
         onUsernameChanged = {},
         onPasswordChanged = {},
         onLoginClicked = {}

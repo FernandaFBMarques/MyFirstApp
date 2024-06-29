@@ -12,24 +12,43 @@ class LoginViewModel(
     private val _viewState = MutableStateFlow(ViewState())
     val viewState = _viewState.asStateFlow()
 
+    private val isLoginValid: Boolean
+        get() = viewState.value.isLoginValid
+
     fun onUsernameChanged(input: String) {
         _viewState.update { currentViewState ->
-            currentViewState.copy(username = input)
+            currentViewState.copy(
+                username = input,
+                isInvalidUser = false
+            )
         }
     }
 
     fun onPasswordChanged(input: String) {
         _viewState.update { currentViewState ->
-            currentViewState.copy(password = input)
+            currentViewState.copy(
+                password = input,
+                isInvalidUser = false
+            )
         }
     }
 
     fun onLoginClicked() {
-        navController.navigate("Store")
+        if (isLoginValid) {
+            navController.navigate("Store")
+        } else {
+            _viewState.update { currentState ->
+                currentState.copy(isInvalidUser = true)
+            }
+        }
     }
 
     data class ViewState(
         val username: String? = null,
-        val password: String? = null
-    )
+        val password: String? = null,
+        val isInvalidUser: Boolean = false
+    ) {
+        val isLoginValid: Boolean
+            get() = username != null && password != null
+    }
 }
