@@ -54,6 +54,7 @@ fun LoginScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(8.dp)
                     .background(Color.White)
+                    .height(72.dp)
                     .padding(16.dp),
                 keyboardOptions = KeyboardOptions.Default,
                 decorationBox = { innerTextField ->
@@ -70,6 +71,7 @@ fun LoginScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(8.dp)
                     .background(Color.White)
+                    .height(72.dp)
                     .padding(16.dp),
                 keyboardOptions = KeyboardOptions.Default,
                 visualTransformation = PasswordVisualTransformation(),
